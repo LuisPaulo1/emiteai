@@ -29,7 +29,7 @@ public class Pessoa {
     @Column(nullable = false, unique = true)
     private String cpf;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "endereco_id", foreignKey = @ForeignKey(name = "fk_pessoa_endereco"))
     private Endereco endereco;
 
