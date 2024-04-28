@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDateTime;
 
@@ -25,7 +24,6 @@ public class Pessoa {
     @Column(nullable = false, length = 30)
     private String telefone;
 
-    @CPF
     @Column(nullable = false, unique = true)
     private String cpf;
 
