@@ -26,7 +26,7 @@ public class Endereco {
     @Column(length = 100)
     private String complemento;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 10)
     private String cep;
 
     @Column(nullable = false, length = 100)

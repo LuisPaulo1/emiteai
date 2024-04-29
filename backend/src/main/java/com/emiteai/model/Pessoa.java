@@ -24,7 +24,7 @@ public class Pessoa {
     @Column(nullable = false, length = 30)
     private String telefone;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, length = 11, unique = true)
     private String cpf;
 
     @ManyToOne(optional = false)

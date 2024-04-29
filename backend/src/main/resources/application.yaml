@@ -3,4 +3,4 @@ spring:
     name: emiteai-api
 
   profiles:
-    active: test
+    active: dev
