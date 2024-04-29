@@ -26,7 +26,7 @@ public class PessoaController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<PessoaResponseDto> findById(Integer id) {
+    public ResponseEntity<PessoaResponseDto> findById(@PathVariable Integer id) {
         PessoaResponseDto pessoa = pessoaService.buscar(id);
         return ResponseEntity.ok(pessoa);
     }

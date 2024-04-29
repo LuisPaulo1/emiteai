@@ -1,6 +1,7 @@
 package com.emiteai.controller.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.br.CPF;
@@ -19,20 +20,6 @@ public class PessoaRequestDto {
     @NotBlank
     private String cpf;
 
-    @NotBlank
-    private String numero;
-
-    private String complemento;
-
-    @NotBlank
-    private String cep;
-
-    @NotBlank
-    private String bairro;
-
-    @NotBlank
-    private String municipio;
-
-    @NotBlank
-    private String estado;
+    @NotNull
+    private EnderecoRequestDto endereco;
 }

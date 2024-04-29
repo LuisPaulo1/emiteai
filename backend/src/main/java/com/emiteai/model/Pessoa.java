@@ -24,10 +24,10 @@ public class Pessoa {
     @Column(nullable = false, length = 30)
     private String telefone;
 
-    @Column(nullable = false, length = 11, unique = true)
+    @Column(nullable = false, length = 14, unique = true)
     private String cpf;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id", foreignKey = @ForeignKey(name = "fk_pessoa_endereco"))
     private Endereco endereco;
 

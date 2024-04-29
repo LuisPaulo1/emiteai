@@ -38,9 +38,6 @@ public class Endereco {
     @Column(nullable = false, length = 100)
     private String estado;
 
-    @OneToMany(mappedBy = "endereco")
-    private List<Pessoa> pessoas = new ArrayList<>();
-
     @CreationTimestamp
     private LocalDateTime dataCriacao;
 

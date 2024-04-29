@@ -8,4 +8,6 @@ spring:
     properties:
       hibernate:
         jdbc.lob.non_contextual_creation: true
+        show_sql: false
+        format_sql: false
     open-in-view: false

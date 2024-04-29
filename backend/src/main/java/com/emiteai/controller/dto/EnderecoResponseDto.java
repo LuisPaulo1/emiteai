@@ -10,13 +10,15 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PessoaResponseDto {
+public class EnderecoResponseDto {
 
     private Integer id;
-    private String nome;
-    private String telefone;
-    private String cpf;
-    private EnderecoResponseDto endereco;
+    private String numero;
+    private String complemento;
+    private String cep;
+    private String bairro;
+    private String municipio;
+    private String estado;
 
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime dataCriacao;
