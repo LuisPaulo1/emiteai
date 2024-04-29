@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost:5432}/emiteai-db
+    username: postgres
+    password: root
+  jpa:
+    properties:
+      hibernate:
+        jdbc.lob.non_contextual_creation: true
+    open-in-view: false
