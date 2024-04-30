@@ -1,5 +1,6 @@
 package com.emiteai.controller.dto;
 
+import com.emiteai.validation.CpfDuplicateValid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -18,6 +19,7 @@ public class PessoaRequestDto {
 
     @CPF
     @NotBlank
+    @CpfDuplicateValid
     private String cpf;
 
     @NotNull
