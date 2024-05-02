@@ -8,7 +8,6 @@ import com.emiteai.service.PessoaService;
 import com.emiteai.service.exception.RecursoNaoEncontradoException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,13 +54,12 @@ public class PessoaServiceImpl implements PessoaService {
 
     @Override
     @Transactional
-    public void deletar(Integer id) {
-        try {
-            pessoaRepository.deleteById(id);
-        }
-        catch (EmptyResultDataAccessException e) {
+    public void deletarPorId(Integer id) {
+        Pessoa pessoa = pessoaRepository.findById(id).orElse(null);
+        if (pessoa == null) {
             throw new RecursoNaoEncontradoException();
         }
+        pessoaRepository.delete(pessoa);
     }
 
     private Pessoa buscarPessoaPorId(Integer id) {

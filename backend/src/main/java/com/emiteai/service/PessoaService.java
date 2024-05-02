@@ -10,5 +10,5 @@ public interface PessoaService {
     PessoaResponseDto buscar(Integer id);
     PessoaResponseDto salvar(PessoaRequestDto pessoaRequestDto);
     PessoaResponseDto atualizar(Integer id, PessoaRequestDto pessoaRequestDto);
-    void deletar(Integer id);
+    void deletarPorId(Integer id);
 }
