@@ -57,7 +57,7 @@ public class PessoaControllerTesteUnitario {
         when(pessoaService.buscar(idExiste)).thenReturn(new PessoaResponseDto());
         when(pessoaService.buscar(idNaoExiste)).thenThrow(new RecursoNaoEncontradoException());
 
-        when(pessoaService.salvar(any())).thenReturn(new PessoaResponseDto());
+        when(pessoaService.cadastrar(any())).thenReturn(new PessoaResponseDto());
 
         when(pessoaRepository.findByCpf(eq("844.014.970-07"))).thenReturn(new Pessoa());
 

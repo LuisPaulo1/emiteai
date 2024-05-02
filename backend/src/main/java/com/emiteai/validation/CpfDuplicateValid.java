@@ -13,7 +13,7 @@ import static java.lang.annotation.ElementType.FIELD;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = CpfDuplicateValidator.class)
 public @interface CpfDuplicateValid {
-	String message() default "CPF já cadastrado";
+	String message() default "CPF já está cadastrado na base de dados";
 
 	Class<?>[] groups() default {};
 

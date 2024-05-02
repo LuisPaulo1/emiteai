@@ -75,8 +75,8 @@ public class PessoaServiceTesteUnitario {
     }
 
     @Test
-    void salvarDeveriaRetornarPessoaSalva() {
-        PessoaResponseDto pessoa = pessoaService.salvar(pessoaRequestDto);
+    void cadastrarDeveriaRetornarPessoaSalva() {
+        PessoaResponseDto pessoa = pessoaService.cadastrar(pessoaRequestDto);
         Assertions.assertNotNull(pessoa);
     }
 

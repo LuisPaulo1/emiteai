@@ -36,7 +36,7 @@ public class PessoaServiceImpl implements PessoaService {
 
     @Override
     @Transactional
-    public PessoaResponseDto salvar(PessoaRequestDto pessoaRequestDto) {
+    public PessoaResponseDto cadastrar(PessoaRequestDto pessoaRequestDto) {
         Pessoa pessoa = new Pessoa();
         modelMapper.map(pessoaRequestDto, pessoa);
         pessoa = pessoaRepository.save(pessoa);
@@ -57,7 +57,7 @@ public class PessoaServiceImpl implements PessoaService {
     public void deletarPorId(Integer id) {
         Pessoa pessoa = pessoaRepository.findById(id).orElse(null);
         if (pessoa == null) {
-            throw new RecursoNaoEncontradoException();
+            throw new RecursoNaoEncontradoException(String.format("Pessoa com id %d não encontrada.", id));
         }
         pessoaRepository.delete(pessoa);
     }

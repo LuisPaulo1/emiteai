@@ -8,7 +8,7 @@ import java.util.List;
 public interface PessoaService {
     List<PessoaResponseDto> listar();
     PessoaResponseDto buscar(Integer id);
-    PessoaResponseDto salvar(PessoaRequestDto pessoaRequestDto);
+    PessoaResponseDto cadastrar(PessoaRequestDto pessoaRequestDto);
     PessoaResponseDto atualizar(Integer id, PessoaRequestDto pessoaRequestDto);
     void deletarPorId(Integer id);
 }
