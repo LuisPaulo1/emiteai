@@ -1,0 +1,30 @@
+server:
+  port: 8081
+
+spring:
+  application:
+      name: relatorio-api
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost:5432}/emiteai-db
+    username: postgres
+    password: root
+
+  jpa:
+    properties:
+      hibernate:
+        jdbc.lob.non_contextual_creation: true
+        show_sql: false
+        format_sql: false
+    open-in-view: false
+
+  rabbitmq:
+      host: localhost
+      port: 5672
+      username: guest
+      password: guest
+
+app-properties:
+  rabbitmq:
+    relatorio:
+      queue: relatorio

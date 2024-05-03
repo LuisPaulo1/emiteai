@@ -1,6 +1,23 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: emiteai-api
 
   profiles:
     active: dev
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+app-properties:
+  rabbitmq:
+    relatorio:
+      queue: relatorio
+
+
+

@@ -2,6 +2,7 @@ package com.emiteai.controller;
 
 import com.emiteai.controller.dto.PessoaRequestDto;
 import com.emiteai.controller.dto.PessoaResponseDto;
+import com.emiteai.controller.dto.RelatorioDto;
 import com.emiteai.service.PessoaService;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
@@ -25,6 +27,25 @@ public class PessoaController {
     public ResponseEntity<List<PessoaResponseDto>> findAll() {
         List<PessoaResponseDto> pessoas = pessoaService.listar();
         return ResponseEntity.ok(pessoas);
+    }
+
+    @GetMapping(path = "/relatorio")
+    public ResponseEntity<List<RelatorioDto>> getRelatorio() {
+        List<RelatorioDto> relatorio = pessoaService.getRelatorio();
+        return ResponseEntity.ok(relatorio);
+    }
+
+    @GetMapping(path = "/relatorio/solicitar")
+    public ResponseEntity<Void> solicitarEmissaoRelatorio() {
+        pessoaService.solicitarRelatorio();
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/relatorio/status")
+    public SseEmitter getRelatorioStatus() {
+        SseEmitter emitter = new SseEmitter();
+        pessoaService.setSseEmitter(emitter);
+        return emitter;
     }
 
     @GetMapping(path = "/{id}")
