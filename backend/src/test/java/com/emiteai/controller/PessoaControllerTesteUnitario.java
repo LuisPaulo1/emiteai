@@ -54,6 +54,9 @@ public class PessoaControllerTesteUnitario {
         pessoaRequestDtoCpfDuplicado = PessoaFactory.criarPessoa();
 
         when(pessoaService.listar()).thenReturn(new ArrayList<>());
+
+        when(pessoaService.getRelatorio()).thenReturn(new ArrayList<>());
+
         when(pessoaService.buscar(idExiste)).thenReturn(new PessoaResponseDto());
         when(pessoaService.buscar(idNaoExiste)).thenThrow(new RecursoNaoEncontradoException());
 
@@ -73,6 +76,15 @@ public class PessoaControllerTesteUnitario {
         ResultActions result =
                 mockMvc.perform(get("/v1/pessoas")
                         .contentType(MediaType.APPLICATION_JSON));
+        result.andExpectAll(status().isOk());
+    }
+
+    @Test
+    void getRelatorioDeveriaRetornarOsRecursosComStatusOk() throws Exception {
+        ResultActions result =
+                mockMvc.perform(get("/v1/pessoas/relatorio")
+                        .contentType(MediaType.APPLICATION_JSON));
+
         result.andExpectAll(status().isOk());
     }
 

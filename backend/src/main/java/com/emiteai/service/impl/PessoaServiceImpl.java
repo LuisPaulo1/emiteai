@@ -62,7 +62,9 @@ public class PessoaServiceImpl implements PessoaService {
     @Override
     public List<RelatorioDto> getRelatorio() {
         List<RelatorioDto> relatorio = new ArrayList<>(this.relatorioPessoas);
-        deletarRelatorio();
+        if(!relatorio.isEmpty() && "CONCLUIDO".equals(this.relatorioStatus)) {
+            deletarRelatorio();
+        }
         return relatorio;
     }
 
@@ -127,7 +129,7 @@ public class PessoaServiceImpl implements PessoaService {
 
     private void deletarRelatorio() {
         log.info("Deletando relatório");
-        relatorioRepository.deleteAll();
         this.relatorioPessoas.clear();
+        relatorioRepository.deleteAll();
     }
 }
