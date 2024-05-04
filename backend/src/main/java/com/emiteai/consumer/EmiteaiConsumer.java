@@ -1,10 +1,12 @@
 package com.emiteai.consumer;
 
 import com.emiteai.service.PessoaService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+@Log4j2
 @Component
 public class EmiteaiConsumer {
 
@@ -13,7 +15,7 @@ public class EmiteaiConsumer {
 
     @RabbitListener(queues = "${app-properties.rabbitmq.relatorio.queue}")
     public void receiveMessage(String message) {
-        System.out.println("Mensagem recebida: " + message);
+        log.info("Mensagem recebida: {}", message);
         pessoaService.buscarRelatorio();
     }
 }

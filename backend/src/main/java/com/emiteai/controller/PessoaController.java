@@ -31,6 +31,7 @@ public class PessoaController {
 
     @GetMapping(path = "/relatorio")
     public ResponseEntity<List<RelatorioDto>> getRelatorio() {
+        log.info("Recebendo requisição para emitir o relatório");
         List<RelatorioDto> relatorio = pessoaService.getRelatorio();
         return ResponseEntity.ok(relatorio);
     }

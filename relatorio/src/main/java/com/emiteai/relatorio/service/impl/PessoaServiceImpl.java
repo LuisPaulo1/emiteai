@@ -6,6 +6,8 @@ import com.emiteai.relatorio.publisher.RelatorioPublisher;
 import com.emiteai.relatorio.repository.PessoaRepository;
 import com.emiteai.relatorio.repository.RelatorioRepository;
 import com.emiteai.relatorio.service.PessoaService;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 @Service
 public class PessoaServiceImpl implements PessoaService {
 
@@ -31,14 +34,16 @@ public class PessoaServiceImpl implements PessoaService {
 
     private List<Pessoa> pessoas = new ArrayList<>();
 
+    @Getter
     private List<Relatorio> relatorioPessoas = new ArrayList<>();
 
     @Override
     @Transactional
     public void gerarRelatorio() {
+        log.info("Gerando relatório...");
         this.pessoas = pessoaRepository.findAll();
         pessoasParaRelatorio();
-        relatorioRepository.saveAll(relatorioPessoas);
+        relatorioRepository.saveAll(this.getRelatorioPessoas());
         notificarEmiteai();
     }
 

@@ -9,6 +9,8 @@ import com.emiteai.repository.PessoaRepository;
 import com.emiteai.repository.RelatorioRepository;
 import com.emiteai.service.PessoaService;
 import com.emiteai.service.exception.RecursoNaoEncontradoException;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 @Service
 public class PessoaServiceImpl implements PessoaService {
 
@@ -40,6 +43,7 @@ public class PessoaServiceImpl implements PessoaService {
     @Value("${app-properties.rabbitmq.relatorio.queue}")
     private String relatorioQueue;
 
+    @Getter
     private String relatorioStatus = "EM_PROCESSAMENTO";
 
     private List<RelatorioDto> relatorioPessoas = new ArrayList<>();
@@ -74,7 +78,7 @@ public class PessoaServiceImpl implements PessoaService {
         this.relatorioStatus = "CONCLUIDO";
         if (this.sseEmitter != null) {
             try {
-                this.sseEmitter.send(this.relatorioStatus);
+                this.sseEmitter.send(this.getRelatorioStatus());
                 this.sseEmitter.complete();
             } catch (IOException e) {
                 this.sseEmitter.completeWithError(e);
@@ -122,6 +126,8 @@ public class PessoaServiceImpl implements PessoaService {
     }
 
     private void deletarRelatorio() {
+        log.info("Deletando relatório");
         relatorioRepository.deleteAll();
+        this.relatorioPessoas.clear();
     }
 }
