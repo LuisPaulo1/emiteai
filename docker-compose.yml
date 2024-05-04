@@ -1,0 +1,91 @@
+version: "3.9"
+
+services:
+  emiteai-backend:
+    image: csluispaulo/emiteai-backend
+    container_name: emiteai-backend
+    restart: always
+    environment:
+      DB_HOST: db-postgres
+      DB_PORT: 5432
+      DB_NAME: emiteai-db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      RABBIT_MQ_HOST: emiteai-rabbitmq
+      RABBIT_MQ_PORT: 5672
+      RABBIT_MQ_USER: guest
+      RABBIT_MQ_PASSWORD: guest
+    ports:
+      - "8080:8080"
+    networks:
+      - emiteai-network
+    depends_on:
+      db-postgres:
+        condition: service_healthy
+      emiteai-rabbitmq:
+        condition: service_healthy
+
+  relatorio-api:
+    image: csluispaulo/relatorio-api
+    container_name: relatorio-api
+    restart: always
+    environment:
+      DB_HOST: db-postgres
+      DB_PORT: 5432
+      DB_NAME: emiteai-db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      RABBIT_MQ_HOST: emiteai-rabbitmq
+      RABBIT_MQ_PORT: 5672
+      RABBIT_MQ_USER: guest
+      RABBIT_MQ_PASSWORD: guest
+    ports:
+      - "8081:8081"
+    networks:
+      - emiteai-network
+    depends_on:
+      db-postgres:
+        condition: service_healthy
+      emiteai-rabbitmq:
+        condition: service_healthy
+
+  db-postgres:
+    image: postgres:13-alpine
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: emiteai-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 25s
+      timeout: 10s
+      retries: 3
+    ports:
+      - "5432:5432"
+    networks:
+      - emiteai-network
+
+  emiteai-rabbitmq:
+    image: rabbitmq:3-management
+    container_name: emiteai-rabbitmq
+    hostname: emiteai-rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 25s
+      timeout: 10s
+      retries: 3
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - emiteai-network
+
+networks:
+  emiteai-network:
+    driver: bridge

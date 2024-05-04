@@ -38,19 +38,22 @@ public class PessoaController {
 
     @GetMapping(path = "/relatorio/solicitar")
     public ResponseEntity<Void> solicitarEmissaoRelatorio() {
+        log.info("Recebendo requisição para solicitar a emissão do relatório");
         pessoaService.solicitarRelatorio();
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/relatorio/status")
     public SseEmitter getRelatorioStatus() {
-        SseEmitter emitter = new SseEmitter();
+        log.info("Recebendo requisição para acompanhar o status do relatório");
+        SseEmitter emitter = new SseEmitter(30 * 1000L);
         pessoaService.setSseEmitter(emitter);
         return emitter;
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<PessoaResponseDto> findById(@PathVariable Integer id) {
+        log.info("Recebendo requisição para buscar pessoa com id {}", id);
         PessoaResponseDto pessoa = pessoaService.buscar(id);
         return ResponseEntity.ok(pessoa);
     }

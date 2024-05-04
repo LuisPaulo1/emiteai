@@ -11,7 +11,7 @@
 	<groupId>com.emiteai</groupId>
 	<artifactId>emiteai</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>emiteai-api</name>
+	<name>emiteai-backend</name>
 	<description>Teste técnico para a emiteaí</description>
 	<properties>
 		<java.version>17</java.version>

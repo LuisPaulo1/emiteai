@@ -41,6 +41,8 @@ public class PessoaServiceImpl implements PessoaService {
     @Transactional
     public void gerarRelatorio() {
         log.info("Gerando relatório...");
+        this.relatorioPessoas.clear();
+        this.relatorioRepository.deleteAll();
         this.pessoas = pessoaRepository.findAll();
         pessoasParaRelatorio();
         relatorioRepository.saveAll(this.getRelatorioPessoas());

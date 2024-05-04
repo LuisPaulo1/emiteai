@@ -61,6 +61,7 @@ public class PessoaServiceImpl implements PessoaService {
 
     @Override
     public List<RelatorioDto> getRelatorio() {
+        log.info("Emitindo o relatório para o cliente...");
         List<RelatorioDto> relatorio = new ArrayList<>(this.relatorioPessoas);
         if(!relatorio.isEmpty() && "CONCLUIDO".equals(this.relatorioStatus)) {
             deletarRelatorio();
@@ -75,6 +76,7 @@ public class PessoaServiceImpl implements PessoaService {
 
     @Override
     public void buscarRelatorio() {
+        log.info("Emiteai notificado, buscando relatório...");
         List<RelatorioDto> relatorioPessoasDto = modelMapper.map(relatorioRepository.findAll(), List.class);
         this.relatorioPessoas = relatorioPessoasDto;
         this.relatorioStatus = "CONCLUIDO";
@@ -82,6 +84,7 @@ public class PessoaServiceImpl implements PessoaService {
             try {
                 this.sseEmitter.send(this.getRelatorioStatus());
                 this.sseEmitter.complete();
+                log.info("Relatório CONCLUÍDO");
             } catch (IOException e) {
                 this.sseEmitter.completeWithError(e);
             }

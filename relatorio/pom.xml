@@ -11,7 +11,7 @@
 	<groupId>com.emiteai</groupId>
 	<artifactId>relatorio</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>relatorio</name>
+	<name>relatorio-api</name>
 	<description>API para geração de relatório para Emiteai</description>
 	<properties>
 		<java.version>17</java.version>
