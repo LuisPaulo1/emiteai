@@ -1,0 +1,207 @@
+{
+	"info": {
+		"_postman_id": "1313b144-2f82-45d6-9483-84cd1988ea3a",
+		"name": "Emiteai",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6556841",
+		"_collection_link": "https://winter-crescent-919725.postman.co/workspace/Vagas~9ee917f7-23a6-4f1a-93be-25da8f21b266/collection/6556841-1313b144-2f82-45d6-9483-84cd1988ea3a?action=share&source=collection_link&creator=6556841"
+	},
+	"item": [
+		{
+			"name": "Pessoas",
+			"item": [
+				{
+					"name": "findAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/v1/pessoas",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"pessoas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "findById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/v1/pessoas/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"pessoas",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "save",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nome\": \"Luis 1\",\r\n    \"telefone\": \"11999781234\",\r\n    \"cpf\": \"145.875.850-84\",\r\n    \"endereco\": {\r\n        \"numero\": \"12\",\r\n        \"complemento\": \"Complemento teste\",\r\n        \"cep\": \"95082123\",\r\n        \"bairro\": \"bairro teste 2\",\r\n        \"municipio\": \"municipio teste 2\",\r\n        \"estado\": \"estado teste 2\"\r\n     }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/pessoas",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"pessoas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nome\": \"Paulo\",\r\n    \"telefone\": \"11999781234\",\r\n    \"cpf\": \"503.538.000-90\",\r\n    \"endereco\": {\r\n        \"numero\": \"16\",\r\n        \"complemento\": \"Complemento teste\",\r\n        \"cep\": \"95082123\",\r\n        \"bairro\": \"bairro teste 3\",\r\n        \"municipio\": \"municipio teste 3\",\r\n        \"estado\": \"estado teste 3\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/pessoas/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"pessoas",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/v1/pessoas/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"pessoas",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Relatório",
+			"item": [
+				{
+					"name": "Status do relatório",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/v1/pessoas/relatorio/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"pessoas",
+								"relatorio",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Solicitar relatório",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/v1/pessoas/relatorio/solicitar",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"pessoas",
+								"relatorio",
+								"solicitar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar relatorio",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/v1/pessoas/relatorio",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"pessoas",
+								"relatorio"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
