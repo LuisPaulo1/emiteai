@@ -85,7 +85,7 @@ services:
       - "5672:5672"
     networks:
       - emiteai-network
-
+      
 networks:
   emiteai-network:
     driver: bridge

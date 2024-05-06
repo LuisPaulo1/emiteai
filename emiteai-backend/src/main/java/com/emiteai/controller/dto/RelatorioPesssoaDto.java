@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RelatorioDto {
+public class RelatorioPesssoaDto {
     private Integer id;
     private String nome;
     private String telefone;

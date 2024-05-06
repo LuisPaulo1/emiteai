@@ -2,7 +2,7 @@ package com.emiteai.service.impl;
 
 import com.emiteai.controller.dto.PessoaRequestDto;
 import com.emiteai.controller.dto.PessoaResponseDto;
-import com.emiteai.controller.dto.RelatorioDto;
+import com.emiteai.controller.dto.RelatorioPesssoaDto;
 import com.emiteai.model.Pessoa;
 import com.emiteai.publisher.EmiteaiPublisher;
 import com.emiteai.repository.PessoaRepository;
@@ -46,7 +46,7 @@ public class PessoaServiceImpl implements PessoaService {
     @Getter
     private String relatorioStatus = "EM_PROCESSAMENTO";
 
-    private List<RelatorioDto> relatorioPessoas = new ArrayList<>();
+    private List<RelatorioPesssoaDto> relatorioPessoas = new ArrayList<>();
 
     @Override
     public List<PessoaResponseDto> listar() {
@@ -60,9 +60,9 @@ public class PessoaServiceImpl implements PessoaService {
     }
 
     @Override
-    public List<RelatorioDto> getRelatorio() {
+    public List<RelatorioPesssoaDto> getRelatorio() {
         log.info("Emitindo o relatório para o cliente...");
-        List<RelatorioDto> relatorio = new ArrayList<>(this.relatorioPessoas);
+        List<RelatorioPesssoaDto> relatorio = new ArrayList<>(this.relatorioPessoas);
         if(!relatorio.isEmpty() && "CONCLUIDO".equals(this.relatorioStatus)) {
             deletarRelatorio();
         }
@@ -77,7 +77,7 @@ public class PessoaServiceImpl implements PessoaService {
     @Override
     public void buscarRelatorio() {
         log.info("Emiteai notificado, buscando relatório...");
-        List<RelatorioDto> relatorioPessoasDto = modelMapper.map(relatorioRepository.findAll(), List.class);
+        List<RelatorioPesssoaDto> relatorioPessoasDto = modelMapper.map(relatorioRepository.findAll(), List.class);
         this.relatorioPessoas = relatorioPessoasDto;
         this.relatorioStatus = "CONCLUIDO";
         if (this.sseEmitter != null) {

@@ -2,7 +2,7 @@ package com.emiteai.controller;
 
 import com.emiteai.controller.dto.PessoaRequestDto;
 import com.emiteai.controller.dto.PessoaResponseDto;
-import com.emiteai.controller.dto.RelatorioDto;
+import com.emiteai.controller.dto.RelatorioPesssoaDto;
 import com.emiteai.service.PessoaService;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
@@ -30,9 +30,9 @@ public class PessoaController {
     }
 
     @GetMapping(path = "/relatorio")
-    public ResponseEntity<List<RelatorioDto>> getRelatorio() {
+    public ResponseEntity<List<RelatorioPesssoaDto>> getRelatorio() {
         log.info("Recebendo requisição para emitir o relatório");
-        List<RelatorioDto> relatorio = pessoaService.getRelatorio();
+        List<RelatorioPesssoaDto> relatorio = pessoaService.getRelatorio();
         return ResponseEntity.ok(relatorio);
     }
 
