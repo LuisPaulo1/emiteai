@@ -9,11 +9,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@ActiveProfiles("test")
 @SpringBootTest
 @Transactional
 public class PessoaServiceTesteIntegracao {
@@ -33,6 +35,10 @@ public class PessoaServiceTesteIntegracao {
     }
 
     @Test
+    @Sql(statements = {
+            "INSERT INTO endereco (id, numero, complemento, cep,  bairro, municipio, estado) VALUES (1, '123', 'apto 123', '12345678', 'Centro', 'São Paulo', 'SP')",
+            "INSERT INTO pessoa (id, nome, telefone, cpf, endereco_id) VALUES (1, 'Fulano', '11999999999', '844.014.970-07', 1)"
+    })
     void listarDeveriaRetornarListaDePessoas() {
       List<PessoaResponseDto> pessoas = pessoaService.listar();
       Assertions.assertFalse(pessoas.isEmpty());
