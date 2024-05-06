@@ -10,7 +10,7 @@ import java.util.List;
 public interface PessoaService {
     List<PessoaResponseDto> listar();
     void solicitarRelatorio();
-    List<RelatorioPesssoaDto> getRelatorio();
+    String getRelatorio();
     void setSseEmitter(SseEmitter sseEmitter);
     void buscarRelatorio();
     PessoaResponseDto buscar(Integer id);

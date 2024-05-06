@@ -2,12 +2,13 @@ package com.emiteai.controller;
 
 import com.emiteai.controller.dto.PessoaRequestDto;
 import com.emiteai.controller.dto.PessoaResponseDto;
-import com.emiteai.controller.dto.RelatorioPesssoaDto;
 import com.emiteai.service.PessoaService;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -29,11 +30,14 @@ public class PessoaController {
         return ResponseEntity.ok(pessoas);
     }
 
-    @GetMapping(path = "/relatorio")
-    public ResponseEntity<List<RelatorioPesssoaDto>> getRelatorio() {
+    @GetMapping(path = "/relatorio", produces = "text/csv")
+    public ResponseEntity<String> getRelatorioCsv() {
         log.info("Recebendo requisição para emitir o relatório");
-        List<RelatorioPesssoaDto> relatorio = pessoaService.getRelatorio();
-        return ResponseEntity.ok(relatorio);
+        String csvData = pessoaService.getRelatorio();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("text/csv"));
+        headers.setContentDispositionFormData("attachment", "relatorio.csv");
+        return new ResponseEntity<>(csvData, headers, HttpStatus.OK);
     }
 
     @GetMapping(path = "/relatorio/solicitar")

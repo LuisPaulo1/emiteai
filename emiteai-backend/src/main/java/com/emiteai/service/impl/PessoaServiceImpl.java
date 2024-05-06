@@ -4,6 +4,7 @@ import com.emiteai.controller.dto.PessoaRequestDto;
 import com.emiteai.controller.dto.PessoaResponseDto;
 import com.emiteai.controller.dto.RelatorioPesssoaDto;
 import com.emiteai.model.Pessoa;
+import com.emiteai.model.Relatorio;
 import com.emiteai.publisher.EmiteaiPublisher;
 import com.emiteai.repository.PessoaRepository;
 import com.emiteai.repository.RelatorioRepository;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -60,13 +62,13 @@ public class PessoaServiceImpl implements PessoaService {
     }
 
     @Override
-    public List<RelatorioPesssoaDto> getRelatorio() {
+    @Transactional
+    public String getRelatorio() {
         log.info("Emitindo o relatório para o cliente...");
-        List<RelatorioPesssoaDto> relatorio = new ArrayList<>(this.relatorioPessoas);
-        if(!relatorio.isEmpty() && "CONCLUIDO".equals(this.relatorioStatus)) {
-            deletarRelatorio();
-        }
-        return relatorio;
+        List<RelatorioPesssoaDto> relatorioPessoas = new ArrayList<>(this.relatorioPessoas);
+        StringBuilder csvBuilder = converterListaRelatorioPessoasParaCsv(relatorioPessoas);
+        deletarRelatorio();
+        return csvBuilder.toString();
     }
 
     @Override
@@ -77,8 +79,8 @@ public class PessoaServiceImpl implements PessoaService {
     @Override
     public void buscarRelatorio() {
         log.info("Emiteai notificado, buscando relatório...");
-        List<RelatorioPesssoaDto> relatorioPessoasDto = modelMapper.map(relatorioRepository.findAll(), List.class);
-        this.relatorioPessoas = relatorioPessoasDto;
+        List<Relatorio> relatorioPessoas = relatorioRepository.findAll();
+        this.relatorioPessoas = converterParaRelatorioPessoaDto(relatorioPessoas);
         this.relatorioStatus = "CONCLUIDO";
         if (this.sseEmitter != null) {
             try {
@@ -125,14 +127,62 @@ public class PessoaServiceImpl implements PessoaService {
         pessoaRepository.delete(pessoa);
     }
 
+    private StringBuilder converterListaRelatorioPessoasParaCsv(List<RelatorioPesssoaDto> relatorioPessoas) {
+        StringBuilder csvBuilder = new StringBuilder();
+        csvBuilder.append("id").append(",");
+        csvBuilder.append("nome").append(",");
+        csvBuilder.append("telefone").append(",");
+        csvBuilder.append("cpf").append(",");
+        csvBuilder.append("numero").append(",");
+        csvBuilder.append("complemento").append(",");
+        csvBuilder.append("cep").append(",");
+        csvBuilder.append("bairro").append(",");
+        csvBuilder.append("municipio").append(",");
+        csvBuilder.append("estado").append("\n");
+        for (RelatorioPesssoaDto item : relatorioPessoas) {
+            csvBuilder.append(StringUtils.arrayToCommaDelimitedString(new Object[] {
+                    item.getId(),
+                    item.getNome(),
+                    item.getTelefone(),
+                    item.getCpf(),
+                    item.getNumero(),
+                    item.getComplemento(),
+                    item.getCep(),
+                    item.getBairro(),
+                    item.getMunicipio(),
+                    item.getEstado()
+            })).append("\n");
+        }
+        return csvBuilder;
+    }
+
+    private List<RelatorioPesssoaDto> converterParaRelatorioPessoaDto(List<Relatorio> relatorioPessoas) {
+        List<RelatorioPesssoaDto> listaRelatorioPessoa = new ArrayList<>();
+       relatorioPessoas.forEach(relatorio -> {
+           RelatorioPesssoaDto relatorioPesssoaDto = new RelatorioPesssoaDto();
+           relatorioPesssoaDto.setId(relatorio.getId());
+           relatorioPesssoaDto.setNome(relatorio.getNome());
+           relatorioPesssoaDto.setTelefone(relatorio.getTelefone());
+           relatorioPesssoaDto.setCpf(relatorio.getCpf());
+           relatorioPesssoaDto.setNumero(relatorio.getNumero());
+           relatorioPesssoaDto.setComplemento(relatorio.getComplemento());
+           relatorioPesssoaDto.setCep(relatorio.getCep());
+           relatorioPesssoaDto.setBairro(relatorio.getBairro());
+           relatorioPesssoaDto.setMunicipio(relatorio.getMunicipio());
+           relatorioPesssoaDto.setEstado(relatorio.getEstado());
+           listaRelatorioPessoa.add(relatorioPesssoaDto);
+       });
+       return listaRelatorioPessoa;
+    }
+
     private Pessoa buscarPessoaPorId(Integer id) {
         return pessoaRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException(String.format("Pessoa com id %d não encontrada.", id)));
     }
 
-    private void deletarRelatorio() {
-        log.info("Deletando relatório");
-        this.relatorioPessoas.clear();
+    private void deletarRelatorio(){
+        log.info("Deletando relatórui...");
+        relatorioPessoas.clear();
         relatorioRepository.deleteAll();
     }
 }

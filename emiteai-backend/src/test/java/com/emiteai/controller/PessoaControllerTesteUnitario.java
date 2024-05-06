@@ -55,7 +55,7 @@ public class PessoaControllerTesteUnitario {
 
         when(pessoaService.listar()).thenReturn(new ArrayList<>());
 
-        when(pessoaService.getRelatorio()).thenReturn(new ArrayList<>());
+        when(pessoaService.getRelatorio()).thenReturn("");
 
         when(pessoaService.buscar(idExiste)).thenReturn(new PessoaResponseDto());
         when(pessoaService.buscar(idNaoExiste)).thenThrow(new RecursoNaoEncontradoException());
@@ -80,11 +80,10 @@ public class PessoaControllerTesteUnitario {
     }
 
     @Test
-    void getRelatorioDeveriaRetornarOsRecursosComStatusOk() throws Exception {
+    void getRelatorioDeveriaRetornarArquivoCsv() throws Exception {
         ResultActions result =
                 mockMvc.perform(get("/v1/pessoas/relatorio")
                         .contentType(MediaType.APPLICATION_JSON));
-
         result.andExpectAll(status().isOk());
     }
 
