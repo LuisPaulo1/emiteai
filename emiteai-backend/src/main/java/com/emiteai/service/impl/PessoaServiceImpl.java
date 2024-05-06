@@ -181,7 +181,7 @@ public class PessoaServiceImpl implements PessoaService {
     }
 
     private void deletarRelatorio(){
-        log.info("Deletando relatórui...");
+        log.info("Deletando relatório...");
         relatorioPessoas.clear();
         relatorioRepository.deleteAll();
     }
