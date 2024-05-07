@@ -25,6 +25,18 @@
 							"path": [
 								"v1",
 								"pessoas"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "id",
+									"disabled": true
+								},
+								{
+									"key": "size",
+									"value": "20",
+									"disabled": true
+								}
 							]
 						}
 					},
