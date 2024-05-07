@@ -21,7 +21,7 @@ Sistema para a empresa Emiteaí que gerencia o cadastro de pessoas físicas.
 ## Collection do postman
 - Está na pasta postman deste repositório.
 
-## Funcionalidaes desenvolvidas
+## Funcionalidades desenvolvidas
 - CRUD de pessoas
 - Validação de duplicidade no campo CPF
 - Geração de relatório em csv executada de forma assíncrona pelo RabbitMQ
