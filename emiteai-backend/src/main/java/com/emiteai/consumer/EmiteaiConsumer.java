@@ -15,7 +15,7 @@ public class EmiteaiConsumer {
 
     @RabbitListener(queues = "${app-properties.rabbitmq.relatorio.queue}")
     public void receiveMessage(String message) {
-        log.info("Mensagem recebida: {}", message);
+        log.info("Mensagem recebida da API relatório: {}", message);
         pessoaService.buscarRelatorio();
     }
 }

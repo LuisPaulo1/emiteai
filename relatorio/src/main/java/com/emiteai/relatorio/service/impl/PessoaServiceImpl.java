@@ -66,6 +66,7 @@ public class PessoaServiceImpl implements PessoaService {
     }
 
     private void notificarEmiteai() {
+        log.info("Enviando mensagem para a fila: {}", relatorioQueue);
         relatorioPublisher.sendMessage(relatorioQueue, "Relatório gerado com sucesso!");
     }
 }

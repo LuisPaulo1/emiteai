@@ -29,14 +29,14 @@ public class PessoaController {
     @GetMapping
     public ResponseEntity<Page<PessoaResponseDto>> findAll(
             @PageableDefault(sort = "id", size = 20, direction = Sort.Direction.ASC) Pageable pageable) {
-        log.info("Recebendo requisição para buscar todas as pessoas");
+        log.info("Recebendo requisição para buscar todas as pessoas.");
         Page<PessoaResponseDto> pessoas = pessoaService.listar(pageable);
         return ResponseEntity.ok(pessoas);
     }
 
     @GetMapping(path = "/relatorio", produces = "text/csv")
     public ResponseEntity<String> getRelatorioCsv() {
-        log.info("Recebendo requisição para emitir o relatório");
+        log.info("Recebendo requisição para emitir o relatório.");
         String csvData = pessoaService.getRelatorio();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("text/csv"));
@@ -46,14 +46,14 @@ public class PessoaController {
 
     @GetMapping(path = "/relatorio/solicitar")
     public ResponseEntity<Void> solicitarEmissaoRelatorio() {
-        log.info("Recebendo requisição para solicitar a emissão do relatório");
+        log.info("Recebendo requisição para solicitar a emissão do relatório.");
         pessoaService.solicitarRelatorio();
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/relatorio/status")
     public SseEmitter getRelatorioStatus() {
-        log.info("Recebendo requisição para acompanhar o status do relatório");
+        log.info("Recebendo requisição para acompanhar o status do relatório.");
         SseEmitter emitter = new SseEmitter(30 * 1000L);
         pessoaService.setSseEmitter(emitter);
         return emitter;

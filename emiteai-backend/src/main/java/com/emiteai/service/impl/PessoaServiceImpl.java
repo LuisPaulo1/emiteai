@@ -62,13 +62,14 @@ public class PessoaServiceImpl implements PessoaService {
 
     @Override
     public void solicitarRelatorio() {
-        emiteaiPublisher.sendMessage(relatorioQueue, "Solicitando emissão de relatório");
+        log.info("Solicitação de emissão de relatório enviado para a fila: {}", relatorioQueue);
+        emiteaiPublisher.sendMessage(relatorioQueue, "Gerar relatório de pessoas");
     }
 
     @Override
     @Transactional
     public String getRelatorio() {
-        log.info("Emitindo o relatório para o cliente...");
+        log.info("Emitindo o relatório para o cliente.");
         List<RelatorioPesssoaDto> relatorioPessoas = new ArrayList<>(this.relatorioPessoas);
         StringBuilder csvBuilder = converterListaRelatorioPessoasParaCsv(relatorioPessoas);
         deletarRelatorio();
@@ -82,7 +83,7 @@ public class PessoaServiceImpl implements PessoaService {
 
     @Override
     public void buscarRelatorio() {
-        log.info("Emiteai notificado, buscando relatório...");
+        log.info("Buscando relatório.");
         List<Relatorio> relatorioPessoas = relatorioRepository.findAll();
         this.relatorioPessoas = converterParaRelatorioPessoaDto(relatorioPessoas);
         this.relatorioStatus = "CONCLUIDO";
@@ -90,7 +91,7 @@ public class PessoaServiceImpl implements PessoaService {
             try {
                 this.sseEmitter.send(this.getRelatorioStatus());
                 this.sseEmitter.complete();
-                log.info("Relatório CONCLUÍDO");
+                log.info("Relatório CONCLUÍDO.");
             } catch (IOException e) {
                 this.sseEmitter.completeWithError(e);
             }
@@ -184,7 +185,7 @@ public class PessoaServiceImpl implements PessoaService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException(String.format("Pessoa com id %d não encontrada.", id)));
     }
 
-    private void deletarRelatorio(){
+    private void deletarRelatorio() {
         log.info("Deletando relatório...");
         relatorioPessoas.clear();
         relatorioRepository.deleteAll();
