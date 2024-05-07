@@ -16,6 +16,9 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
@@ -39,6 +42,7 @@ public class PessoaServiceTesteUnitario {
     private Integer idExiste;
     private Integer idNaoExiste;
     private PessoaRequestDto pessoaRequestDto;
+    private Pageable page = Pageable.unpaged();
 
     @BeforeEach
     void setUp() throws Exception {
@@ -46,7 +50,7 @@ public class PessoaServiceTesteUnitario {
         idExiste = 1;
         pessoaRequestDto = PessoaFactory.criarPessoa();
 
-        when(pessoaRepository.findAll()).thenReturn(List.of(new Pessoa()));
+        when(pessoaRepository.findAll(page)).thenReturn(new PageImpl<>(List.of(new Pessoa())));
 
         when(pessoaRepository.findById(idExiste)).thenReturn(Optional.of(new Pessoa()));
         when(pessoaRepository.findById(idNaoExiste)).thenReturn(Optional.empty());
@@ -59,7 +63,7 @@ public class PessoaServiceTesteUnitario {
 
     @Test
     void listarDeveriaRetornarListaDePessoas() {
-        List<PessoaResponseDto> pessoas = pessoaService.listar();
+        Page<PessoaResponseDto> pessoas = pessoaService.listar(page);
         Assertions.assertFalse(pessoas.isEmpty());
     }
 

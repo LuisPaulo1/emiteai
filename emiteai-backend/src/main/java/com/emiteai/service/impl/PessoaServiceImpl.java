@@ -15,6 +15,9 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -51,9 +54,10 @@ public class PessoaServiceImpl implements PessoaService {
     private List<RelatorioPesssoaDto> relatorioPessoas = new ArrayList<>();
 
     @Override
-    public List<PessoaResponseDto> listar() {
-        List<Pessoa> pessoas = pessoaRepository.findAll();
-        return modelMapper.map(pessoas, List.class);
+    public Page<PessoaResponseDto> listar(Pageable pageable) {
+        Page<Pessoa> pessoas = pessoaRepository.findAll(pageable);
+        List<PessoaResponseDto> pessoasDto = modelMapper.map(pessoas.getContent(), List.class);
+        return new PageImpl<>(pessoasDto, pageable, pessoas.getTotalElements());
     }
 
     @Override

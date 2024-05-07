@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -52,8 +54,9 @@ public class PessoaControllerTesteUnitario {
         pessoaRequestDto = PessoaFactory.criarPessoa();
         pessoaRequestDto.setCpf("424.012.830-72");
         pessoaRequestDtoCpfDuplicado = PessoaFactory.criarPessoa();
+        Page<PessoaResponseDto> page = new PageImpl<>(new ArrayList<>());
 
-        when(pessoaService.listar()).thenReturn(new ArrayList<>());
+        when(pessoaService.listar(any())).thenReturn(page);
 
         when(pessoaService.getRelatorio()).thenReturn("");
 

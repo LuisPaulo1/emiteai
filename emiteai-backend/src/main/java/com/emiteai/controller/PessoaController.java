@@ -6,6 +6,10 @@ import com.emiteai.service.PessoaService;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.util.List;
 
 @Log4j2
 @Controller
@@ -25,8 +27,10 @@ public class PessoaController {
     private PessoaService pessoaService;
 
     @GetMapping
-    public ResponseEntity<List<PessoaResponseDto>> findAll() {
-        List<PessoaResponseDto> pessoas = pessoaService.listar();
+    public ResponseEntity<Page<PessoaResponseDto>> findAll(
+            @PageableDefault(sort = "id", size = 20, direction = Sort.Direction.ASC) Pageable pageable) {
+        log.info("Recebendo requisição para buscar todas as pessoas");
+        Page<PessoaResponseDto> pessoas = pessoaService.listar(pageable);
         return ResponseEntity.ok(pessoas);
     }
 
