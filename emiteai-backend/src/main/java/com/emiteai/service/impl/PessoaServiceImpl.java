@@ -7,10 +7,9 @@ import com.emiteai.model.Pessoa;
 import com.emiteai.model.Relatorio;
 import com.emiteai.publisher.EmiteaiPublisher;
 import com.emiteai.repository.PessoaRepository;
-import com.emiteai.repository.RelatorioRepository;
+import com.emiteai.repository.RelatorioPessoaRepository;
 import com.emiteai.service.PessoaService;
 import com.emiteai.service.exception.RecursoNaoEncontradoException;
-import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ public class PessoaServiceImpl implements PessoaService {
     private PessoaRepository pessoaRepository;
 
     @Autowired
-    private RelatorioRepository relatorioRepository;
+    private RelatorioPessoaRepository relatorioPessoaRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -48,8 +47,7 @@ public class PessoaServiceImpl implements PessoaService {
     @Value("${app-properties.rabbitmq.relatorio.queue}")
     private String relatorioQueue;
 
-    @Getter
-    private String relatorioStatus = "EM_PROCESSAMENTO";
+    private boolean isEmitterComplete = false;
 
     private List<RelatorioPesssoaDto> relatorioPessoas = new ArrayList<>();
 
@@ -62,8 +60,10 @@ public class PessoaServiceImpl implements PessoaService {
 
     @Override
     public void solicitarRelatorio() {
-        log.info("Solicitação de emissão de relatório enviado para a fila: {}", relatorioQueue);
-        emiteaiPublisher.sendMessage(relatorioQueue, "Gerar relatório de pessoas");
+        if(this.sseEmitter != null && !this.isEmitterComplete) {
+            log.info("Solicitação de emissão de relatório enviado para a fila: {}", relatorioQueue);
+            emiteaiPublisher.sendMessage(relatorioQueue, "Gerar relatório de pessoas");
+        }
     }
 
     @Override
@@ -79,21 +79,23 @@ public class PessoaServiceImpl implements PessoaService {
     @Override
     public void setSseEmitter(SseEmitter sseEmitter) {
         this.sseEmitter = sseEmitter;
+        this.isEmitterComplete = false;
     }
 
     @Override
     public void buscarRelatorio() {
         log.info("Buscando relatório.");
-        List<Relatorio> relatorioPessoas = relatorioRepository.findAll();
+        List<Relatorio> relatorioPessoas = relatorioPessoaRepository.findAll();
         this.relatorioPessoas = converterParaRelatorioPessoaDto(relatorioPessoas);
-        this.relatorioStatus = "CONCLUIDO";
-        if (this.sseEmitter != null) {
+        if (this.sseEmitter != null && !this.isEmitterComplete) {
             try {
-                this.sseEmitter.send(this.getRelatorioStatus());
+                this.sseEmitter.send("CONCLUIDO");
                 this.sseEmitter.complete();
+                this.isEmitterComplete = true;
                 log.info("Relatório CONCLUÍDO.");
             } catch (IOException e) {
                 this.sseEmitter.completeWithError(e);
+                this.isEmitterComplete = true;
             }
         }
     }
@@ -188,6 +190,6 @@ public class PessoaServiceImpl implements PessoaService {
     private void deletarRelatorio() {
         log.info("Deletando relatório...");
         relatorioPessoas.clear();
-        relatorioRepository.deleteAll();
+        relatorioPessoaRepository.deleteAll();
     }
 }

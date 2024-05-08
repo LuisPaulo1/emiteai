@@ -4,7 +4,7 @@ import com.emiteai.relatorio.model.Pessoa;
 import com.emiteai.relatorio.model.Relatorio;
 import com.emiteai.relatorio.publisher.RelatorioPublisher;
 import com.emiteai.relatorio.repository.PessoaRepository;
-import com.emiteai.relatorio.repository.RelatorioRepository;
+import com.emiteai.relatorio.repository.RelatorioPessoaRepository;
 import com.emiteai.relatorio.service.PessoaService;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
@@ -24,7 +24,7 @@ public class PessoaServiceImpl implements PessoaService {
     private PessoaRepository pessoaRepository;
 
     @Autowired
-    private RelatorioRepository relatorioRepository;
+    private RelatorioPessoaRepository relatorioPessoaRepository;
 
     @Autowired
     private RelatorioPublisher relatorioPublisher;
@@ -41,12 +41,22 @@ public class PessoaServiceImpl implements PessoaService {
     @Transactional
     public void gerarRelatorio() {
         log.info("Gerando relatório...");
-        this.relatorioPessoas.clear();
-        this.relatorioRepository.deleteAll();
+        List<Relatorio> relatorioPessoas = relatorioPessoaRepository.findAll();
+        if(relatorioPessoas.isEmpty()) {
+            log.info("Relatório vazio, gerando novo relatório.");
+            gerarNovoRelatorio();
+        } else {
+            log.info("Relatório já gerado.");
+        }
+        notificarEmiteai();
+    }
+
+    private void gerarNovoRelatorio() {
+        relatorioPessoas.clear();
+        relatorioPessoaRepository.deleteAll();
         this.pessoas = pessoaRepository.findAll();
         pessoasParaRelatorio();
-        relatorioRepository.saveAll(this.getRelatorioPessoas());
-        notificarEmiteai();
+        relatorioPessoaRepository.saveAll(this.getRelatorioPessoas());
     }
 
     private void pessoasParaRelatorio() {
