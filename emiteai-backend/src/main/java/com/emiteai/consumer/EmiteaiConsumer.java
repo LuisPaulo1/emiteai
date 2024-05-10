@@ -13,7 +13,7 @@ public class EmiteaiConsumer {
     @Autowired
     private PessoaService pessoaService;
 
-    @RabbitListener(queues = "${app-properties.rabbitmq.relatorio.queue}")
+    @RabbitListener(queues = "${app-properties.rabbitmq.emiteai.queue}")
     public void receiveMessage(String message) {
         log.info("Mensagem recebida da API relatório: {}", message);
         pessoaService.buscarRelatorio();

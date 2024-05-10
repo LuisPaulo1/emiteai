@@ -45,7 +45,7 @@ public class PessoaServiceImpl implements PessoaService {
     private SseEmitter sseEmitter;
 
     @Value("${app-properties.rabbitmq.relatorio.queue}")
-    private String relatorioQueue;
+    private String relatorio;
 
     private boolean isEmitterComplete = false;
 
@@ -61,8 +61,8 @@ public class PessoaServiceImpl implements PessoaService {
     @Override
     public void solicitarRelatorio() {
         if(this.sseEmitter != null && !this.isEmitterComplete) {
-            log.info("Solicitação de emissão de relatório enviado para a fila: {}", relatorioQueue);
-            emiteaiPublisher.sendMessage(relatorioQueue, "Gerar relatório de pessoas");
+            log.info("Solicitação de emissão de relatório enviado para a fila: {}", relatorio);
+            emiteaiPublisher.sendMessage(relatorio, "Gerar relatório de pessoas");
         }
     }
 
@@ -86,6 +86,10 @@ public class PessoaServiceImpl implements PessoaService {
     public void buscarRelatorio() {
         log.info("Buscando relatório.");
         List<Relatorio> relatorioPessoas = relatorioPessoaRepository.findAll();
+        if (relatorioPessoas.isEmpty()) {
+            log.info("Relatório não encontrado.");
+            return;
+        }
         this.relatorioPessoas = converterParaRelatorioPessoaDto(relatorioPessoas);
         if (this.sseEmitter != null && !this.isEmitterComplete) {
             try {
@@ -98,6 +102,7 @@ public class PessoaServiceImpl implements PessoaService {
                 this.isEmitterComplete = true;
             }
         }
+
     }
 
     @Override

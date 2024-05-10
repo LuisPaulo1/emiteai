@@ -8,6 +8,10 @@ import com.emiteai.relatorio.repository.RelatorioPessoaRepository;
 import com.emiteai.relatorio.service.PessoaService;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,8 +33,16 @@ public class PessoaServiceImpl implements PessoaService {
     @Autowired
     private RelatorioPublisher relatorioPublisher;
 
-    @Value("${app-properties.rabbitmq.relatorio.queue}")
-    private String relatorioQueue;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Value("${app-properties.rabbitmq.emiteai.queue}")
+    private String emiteai;
+
+    @Value("${app-properties.rabbitmq.queue.dlq}")
+    private String queueDlq;
+
+    private int retryCount = 0;
 
     private List<Pessoa> pessoas = new ArrayList<>();
 
@@ -44,11 +56,23 @@ public class PessoaServiceImpl implements PessoaService {
         List<Relatorio> relatorioPessoas = relatorioPessoaRepository.findAll();
         if(relatorioPessoas.isEmpty()) {
             log.info("Relatório vazio, gerando novo relatório.");
-            gerarNovoRelatorio();
+            try {
+                gerarNovoRelatorio();
+                notificarEmiteai();
+            } catch (Exception e) {
+                log.error("Erro ao gerar novo relatório: {}", e.getMessage());
+                Message failedMessage = MessageBuilder.withBody(("Erro ao gerar novo relatório: " + e.getMessage()).getBytes())
+                        .setContentType(MessageProperties.CONTENT_TYPE_TEXT_PLAIN)
+                        .setHeader("x-retries", retryCount)
+                        .build();
+                retryCount++;
+                log.info("Enviando mensagem para a fila {}", queueDlq);
+                rabbitTemplate.send(queueDlq, failedMessage);
+            }
         } else {
             log.info("Relatório já gerado.");
+            notificarEmiteai();
         }
-        notificarEmiteai();
     }
 
     private void gerarNovoRelatorio() {
@@ -76,7 +100,8 @@ public class PessoaServiceImpl implements PessoaService {
     }
 
     private void notificarEmiteai() {
-        log.info("Enviando mensagem para a fila: {}", relatorioQueue);
-        relatorioPublisher.sendMessage(relatorioQueue, "Relatório gerado com sucesso!");
+        log.info("Relatório gerado.");
+        log.info("Enviando mensagem para a fila: {}", emiteai);
+        relatorioPublisher.sendMessage(emiteai, "Relatório gerado com sucesso!");
     }
 }

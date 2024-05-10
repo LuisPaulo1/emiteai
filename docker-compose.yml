@@ -75,6 +75,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
     healthcheck:
       test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
       interval: 25s

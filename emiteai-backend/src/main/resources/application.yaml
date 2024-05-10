@@ -13,11 +13,19 @@ spring:
     port: ${RABBIT_MQ_PORT:5672}
     username: ${RABBIT_MQ_USER:guest}
     password: ${RABBIT_MQ_PASSWORD:guest}
+    listener:
+      simple:
+        default-requeue-rejected: false
 
 app-properties:
   rabbitmq:
     relatorio:
       queue: relatorio
-
+    emiteai:
+      queue: emiteai
+    queue:
+      dlq: queue-dlq
+      dlx: queue-dlx
+      parking-lot: queue-parking-lot
 
 
