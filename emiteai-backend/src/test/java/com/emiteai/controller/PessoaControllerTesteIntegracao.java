@@ -100,21 +100,6 @@ public class PessoaControllerTesteIntegracao {
     @Test
     @Sql(statements = {
             "INSERT INTO endereco (id, numero, complemento, cep,  bairro, municipio, estado) VALUES (1, '123', 'apto 123', '12345678', 'Centro', 'São Paulo', 'SP')",
-            "INSERT INTO pessoa (id, nome, telefone, cpf, endereco_id) VALUES (1, 'Fulano', '11999999999', '844.014.970-07', 1)"
-    })
-    void saveDeveriaRetornarBadRequestQuandoCpfJaExiste() throws Exception {
-        pessoaRequestDto.setCpf("844.014.970-07");
-        ResultActions result =
-                mockMvc.perform(post("/v1/pessoas")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(pessoaRequestDto)));
-
-        result.andExpectAll(status().isBadRequest());
-    }
-
-    @Test
-    @Sql(statements = {
-            "INSERT INTO endereco (id, numero, complemento, cep,  bairro, municipio, estado) VALUES (1, '123', 'apto 123', '12345678', 'Centro', 'São Paulo', 'SP')",
             "INSERT INTO pessoa (id, nome, telefone, cpf, endereco_id) VALUES (1, 'Fulano', '11999999999', '844.014.970-07', 1)",
     })
     void updateDeveriaRetornarORecursoAtualizadoComStatusOk() throws Exception {

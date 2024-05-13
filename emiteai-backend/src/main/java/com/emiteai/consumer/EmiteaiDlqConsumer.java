@@ -5,7 +5,6 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +14,7 @@ import java.nio.charset.StandardCharsets;
 @Component
 public class EmiteaiDlqConsumer {
 
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+    private final RabbitTemplate rabbitTemplate;
 
     @Value("${app-properties.rabbitmq.relatorio.queue}")
     private String relatorio;
@@ -26,6 +24,10 @@ public class EmiteaiDlqConsumer {
 
     @Value("${app-properties.rabbitmq.queue.parking-lot}")
     private String queueParkingLot;
+
+    public EmiteaiDlqConsumer(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
 
     @RabbitListener(queues = "${app-properties.rabbitmq.queue.dlq}")
     public void receiveDlqMessage(Message message) {

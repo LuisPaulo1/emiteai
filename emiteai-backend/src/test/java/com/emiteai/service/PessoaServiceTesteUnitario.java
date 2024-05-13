@@ -4,6 +4,7 @@ import com.emiteai.controller.dto.PessoaRequestDto;
 import com.emiteai.controller.dto.PessoaResponseDto;
 import com.emiteai.model.Pessoa;
 import com.emiteai.repository.PessoaRepository;
+import com.emiteai.service.exception.NegocioException;
 import com.emiteai.service.exception.RecursoNaoEncontradoException;
 import com.emiteai.service.impl.PessoaServiceImpl;
 import com.emiteai.util.PessoaFactory;
@@ -49,11 +50,20 @@ public class PessoaServiceTesteUnitario {
         idNaoExiste = Integer.MAX_VALUE;
         idExiste = 1;
         pessoaRequestDto = PessoaFactory.criarPessoa();
+        Pessoa pessoaExistente = new Pessoa();
+        pessoaExistente.setId(idExiste);
+        pessoaExistente.setCpf("844.014.970-07");
 
         when(pessoaRepository.findAll(page)).thenReturn(new PageImpl<>(List.of(new Pessoa())));
 
         when(pessoaRepository.findById(idExiste)).thenReturn(Optional.of(new Pessoa()));
         when(pessoaRepository.findById(idNaoExiste)).thenReturn(Optional.empty());
+        when(pessoaRepository.findById(idExiste)).thenReturn(Optional.of(pessoaExistente));
+
+        when(pessoaRepository.findByCpf(any())).thenReturn(new Pessoa());
+        when(pessoaRepository.findByCpf("090.836.680-96")).thenReturn(new Pessoa());
+        when(pessoaRepository.findByCpf(any())).thenReturn(null);
+        when(pessoaRepository.findByCpf("844.014.970-07")).thenReturn(pessoaExistente);
 
         when(pessoaRepository.save(any())).thenReturn(new Pessoa());
 
@@ -79,13 +89,21 @@ public class PessoaServiceTesteUnitario {
     }
 
     @Test
-    void cadastrarDeveriaRetornarPessoaSalva() {
+    void cadastrarDeveriaRetornarPessoaSalvaQuandoCpfNaoEstaCadastrado() {
+        pessoaRequestDto.setCpf("090.836.680-96");
         PessoaResponseDto pessoa = pessoaService.cadastrar(pessoaRequestDto);
         Assertions.assertNotNull(pessoa);
     }
 
     @Test
+    void cadastrarDeveriaLancarNegocioExceptionQuandoCpfJaEstaCadastrado() {
+        pessoaRequestDto.setCpf("844.014.970-07");
+        Assertions.assertThrows(NegocioException.class, () -> pessoaService.cadastrar(pessoaRequestDto));
+    }
+
+    @Test
     void atualizarDeveriaRetornarPessoaAtualizada() {
+        pessoaRequestDto.setNome("Ciclano");
         PessoaResponseDto pessoa = pessoaService.atualizar(idExiste, pessoaRequestDto);
         Assertions.assertNotNull(pessoa);
     }

@@ -2,6 +2,7 @@ package com.emiteai.service;
 
 import com.emiteai.controller.dto.PessoaRequestDto;
 import com.emiteai.controller.dto.PessoaResponseDto;
+import com.emiteai.service.exception.NegocioException;
 import com.emiteai.service.exception.RecursoNaoEncontradoException;
 import com.emiteai.util.PessoaFactory;
 import org.junit.jupiter.api.Assertions;
@@ -61,7 +62,7 @@ public class PessoaServiceTesteIntegracao {
     }
 
     @Test
-    void cadastrarDeveriaRetornarPessoaSalva() {
+    void cadastrarDeveriaRetornarPessoaSalvaQuandoCpfNaoEstaCadastrado() {
       PessoaResponseDto pessoa = pessoaService.cadastrar(pessoaRequestDto);
       Assertions.assertNotNull(pessoa);
     }
@@ -71,7 +72,18 @@ public class PessoaServiceTesteIntegracao {
             "INSERT INTO endereco (id, numero, complemento, cep,  bairro, municipio, estado) VALUES (1, '123', 'apto 123', '12345678', 'Centro', 'São Paulo', 'SP')",
             "INSERT INTO pessoa (id, nome, telefone, cpf, endereco_id) VALUES (1, 'Fulano', '11999999999', '844.014.970-07', 1)"
     })
+    void cadastrarDeveriaLancarNegocioExceptionQuandoCpfJaEstaCadastrado() {
+      pessoaRequestDto.setCpf("844.014.970-07");
+      Assertions.assertThrows(NegocioException.class, () -> pessoaService.cadastrar(pessoaRequestDto));
+    }
+
+    @Test
+    @Sql(statements = {
+            "INSERT INTO endereco (id, numero, complemento, cep,  bairro, municipio, estado) VALUES (1, '123', 'apto 123', '12345678', 'Centro', 'São Paulo', 'SP')",
+            "INSERT INTO pessoa (id, nome, telefone, cpf, endereco_id) VALUES (1, 'Fulano', '11999999999', '844.014.970-07', 1)"
+    })
     void atualizarDeveriaRetornarPessoaAtualizada() {
+      pessoaRequestDto.setNome("Ciclano");
       PessoaResponseDto pessoa = pessoaService.atualizar(idExiste, pessoaRequestDto);
       Assertions.assertNotNull(pessoa);
     }
@@ -79,6 +91,19 @@ public class PessoaServiceTesteIntegracao {
     @Test
     void atualizarDeveriaLancarExcecaoQuandoIdNaoExiste() {
       Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> pessoaService.atualizar(idNaoExiste, pessoaRequestDto));
+    }
+
+    @Test
+    @Sql(statements = {
+            "INSERT INTO endereco (id, numero, complemento, cep,  bairro, municipio, estado) VALUES (1, '123', 'apto 123', '12345678', 'Centro', 'São Paulo', 'SP')",
+            "INSERT INTO pessoa (id, nome, telefone, cpf, endereco_id) VALUES (1, 'Fulano', '11999999999', '844.014.970-07', 1)",
+            "INSERT INTO endereco (id, numero, complemento, cep,  bairro, municipio, estado) VALUES (2, '123', 'apto 123', '12345678', 'Centro', 'São Paulo', 'SP')",
+            "INSERT INTO pessoa (id, nome, telefone, cpf, endereco_id) VALUES (2, 'Ciclano', '11999999999', '424.012.830-72', 2)"
+
+    })
+    void atualizarDeveriaLancarNegocioExceptionQuandoCpfJaEstaCadastrado() {
+      pessoaRequestDto.setCpf("424.012.830-72");
+      Assertions.assertThrows(NegocioException.class, () -> pessoaService.atualizar(idExiste, pessoaRequestDto));
     }
 
     @Test

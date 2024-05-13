@@ -9,10 +9,10 @@ import com.emiteai.publisher.EmiteaiPublisher;
 import com.emiteai.repository.PessoaRepository;
 import com.emiteai.repository.RelatorioPessoaRepository;
 import com.emiteai.service.PessoaService;
+import com.emiteai.service.exception.NegocioException;
 import com.emiteai.service.exception.RecursoNaoEncontradoException;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -30,17 +30,13 @@ import java.util.List;
 @Service
 public class PessoaServiceImpl implements PessoaService {
 
-    @Autowired
-    private PessoaRepository pessoaRepository;
+    private final PessoaRepository pessoaRepository;
 
-    @Autowired
-    private RelatorioPessoaRepository relatorioPessoaRepository;
+    private final RelatorioPessoaRepository relatorioPessoaRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
-    @Autowired
-    private EmiteaiPublisher emiteaiPublisher;
+    private final EmiteaiPublisher emiteaiPublisher;
 
     private SseEmitter sseEmitter;
 
@@ -50,6 +46,13 @@ public class PessoaServiceImpl implements PessoaService {
     private boolean isEmitterComplete = false;
 
     private List<RelatorioPesssoaDto> relatorioPessoas = new ArrayList<>();
+
+    public PessoaServiceImpl(PessoaRepository pessoaRepository, RelatorioPessoaRepository relatorioPessoaRepository, ModelMapper modelMapper, EmiteaiPublisher emiteaiPublisher) {
+        this.pessoaRepository = pessoaRepository;
+        this.relatorioPessoaRepository = relatorioPessoaRepository;
+        this.modelMapper = modelMapper;
+        this.emiteaiPublisher = emiteaiPublisher;
+    }
 
     @Override
     public Page<PessoaResponseDto> listar(Pageable pageable) {
@@ -102,7 +105,6 @@ public class PessoaServiceImpl implements PessoaService {
                 this.isEmitterComplete = true;
             }
         }
-
     }
 
     @Override
@@ -114,6 +116,10 @@ public class PessoaServiceImpl implements PessoaService {
     @Override
     @Transactional
     public PessoaResponseDto cadastrar(PessoaRequestDto pessoaRequestDto) {
+        boolean isCpfDuplicado = isCpfDuplicado(null, pessoaRequestDto);
+        if (!isCpfDuplicado) {
+            throw new NegocioException("CPF já cadastrado.");
+        }
         Pessoa pessoa = new Pessoa();
         modelMapper.map(pessoaRequestDto, pessoa);
         pessoa = pessoaRepository.save(pessoa);
@@ -124,6 +130,10 @@ public class PessoaServiceImpl implements PessoaService {
     @Transactional
     public PessoaResponseDto atualizar(Integer id, PessoaRequestDto pessoaRequestDto) {
         Pessoa pessoa = buscarPessoaPorId(id);
+        boolean isCpfDuplicado = isCpfDuplicado(id, pessoaRequestDto);
+        if (!isCpfDuplicado) {
+            throw new NegocioException("CPF já cadastrado.");
+        }
         modelMapper.map(pessoaRequestDto, pessoa);
         pessoa = pessoaRepository.save(pessoa);
         return modelMapper.map(pessoa, PessoaResponseDto.class);
@@ -137,6 +147,19 @@ public class PessoaServiceImpl implements PessoaService {
             throw new RecursoNaoEncontradoException(String.format("Pessoa com id %d não encontrada.", id));
         }
         pessoaRepository.delete(pessoa);
+    }
+
+    private boolean isCpfDuplicado(Integer id, PessoaRequestDto pessoaRequestDto) {
+        String cpf = pessoaRequestDto.getCpf();
+        log.info("Validando se o CPF {} está cadastrado na base de dados...", cpf);
+        Pessoa pessoa = pessoaRepository.findByCpf(cpf);
+        if (pessoa != null && id != null) {
+            Pessoa pessoaAtual = pessoaRepository.findById(id).orElse(null);
+            if (pessoaAtual != null) {
+                return pessoaAtual.getId().equals(pessoa.getId());
+            }
+        }
+        return pessoa == null;
     }
 
     private StringBuilder converterListaRelatorioPessoasParaCsv(List<RelatorioPesssoaDto> relatorioPessoas) {

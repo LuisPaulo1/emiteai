@@ -2,8 +2,6 @@ package com.emiteai.controller;
 
 import com.emiteai.controller.dto.PessoaRequestDto;
 import com.emiteai.controller.dto.PessoaResponseDto;
-import com.emiteai.model.Pessoa;
-import com.emiteai.repository.PessoaRepository;
 import com.emiteai.service.PessoaService;
 import com.emiteai.service.exception.RecursoNaoEncontradoException;
 import com.emiteai.util.PessoaFactory;
@@ -39,21 +37,15 @@ public class PessoaControllerTesteUnitario {
     @MockBean
     private PessoaService pessoaService;
 
-    @MockBean
-    private PessoaRepository pessoaRepository;
-
     private Integer idExiste;
     private Integer idNaoExiste;
     private PessoaRequestDto pessoaRequestDto;
-    private PessoaRequestDto pessoaRequestDtoCpfDuplicado;
 
     @BeforeEach
     void setUp() throws Exception {
         idNaoExiste = Integer.MAX_VALUE;
         idExiste = 1;
         pessoaRequestDto = PessoaFactory.criarPessoa();
-        pessoaRequestDto.setCpf("424.012.830-72");
-        pessoaRequestDtoCpfDuplicado = PessoaFactory.criarPessoa();
         Page<PessoaResponseDto> page = new PageImpl<>(new ArrayList<>());
 
         when(pessoaService.listar(any())).thenReturn(page);
@@ -64,8 +56,6 @@ public class PessoaControllerTesteUnitario {
         when(pessoaService.buscar(idNaoExiste)).thenThrow(new RecursoNaoEncontradoException());
 
         when(pessoaService.cadastrar(any())).thenReturn(new PessoaResponseDto());
-
-        when(pessoaRepository.findByCpf(eq("844.014.970-07"))).thenReturn(new Pessoa());
 
         when(pessoaService.atualizar(eq(idExiste), any(PessoaRequestDto.class))).thenReturn(new PessoaResponseDto());
         when(pessoaService.atualizar(eq(idNaoExiste), any(PessoaRequestDto.class))).thenThrow(new RecursoNaoEncontradoException());
@@ -122,16 +112,6 @@ public class PessoaControllerTesteUnitario {
                 mockMvc.perform(post("/v1/pessoas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(pessoaRequestDto)));
-        result.andExpectAll(status().isBadRequest());
-    }
-
-    @Test
-    void saveDeveriaRetornarBadRequestQuandoCpfJaExiste() throws Exception {
-        pessoaRequestDto.setCpf("844.014.970-07");
-        ResultActions result =
-                mockMvc.perform(post("/v1/pessoas")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(pessoaRequestDtoCpfDuplicado)));
         result.andExpectAll(status().isBadRequest());
     }
 

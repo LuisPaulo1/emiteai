@@ -12,7 +12,6 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,17 +23,13 @@ import java.util.List;
 @Service
 public class PessoaServiceImpl implements PessoaService {
 
-    @Autowired
-    private PessoaRepository pessoaRepository;
+    private final PessoaRepository pessoaRepository;
 
-    @Autowired
-    private RelatorioPessoaRepository relatorioPessoaRepository;
+    private final RelatorioPessoaRepository relatorioPessoaRepository;
 
-    @Autowired
-    private RelatorioPublisher relatorioPublisher;
+    private final RelatorioPublisher relatorioPublisher;
 
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+    private final RabbitTemplate rabbitTemplate;
 
     @Value("${app-properties.rabbitmq.emiteai.queue}")
     private String emiteai;
@@ -48,6 +43,13 @@ public class PessoaServiceImpl implements PessoaService {
 
     @Getter
     private List<Relatorio> relatorioPessoas = new ArrayList<>();
+
+    public PessoaServiceImpl(PessoaRepository pessoaRepository, RelatorioPessoaRepository relatorioPessoaRepository, RelatorioPublisher relatorioPublisher, RabbitTemplate rabbitTemplate) {
+        this.pessoaRepository = pessoaRepository;
+        this.relatorioPessoaRepository = relatorioPessoaRepository;
+        this.relatorioPublisher = relatorioPublisher;
+        this.rabbitTemplate = rabbitTemplate;
+    }
 
     @Override
     @Transactional

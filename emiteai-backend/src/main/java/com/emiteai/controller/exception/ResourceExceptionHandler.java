@@ -1,5 +1,6 @@
 package com.emiteai.controller.exception;
 
+import com.emiteai.service.exception.NegocioException;
 import com.emiteai.service.exception.RecursoNaoEncontradoException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,18 @@ public class ResourceExceptionHandler {
         err.setDateTime(LocalDateTime.now());
         err.setStatus(status.value());
         err.setError("Recurso não encontrado");
+        err.setMessage(e.getMessage());
+        err.setPath(request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(NegocioException.class)
+    public ResponseEntity<StandardError> handleNegocioException(NegocioException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        StandardError err = new StandardError();
+        err.setDateTime(LocalDateTime.now());
+        err.setStatus(status.value());
+        err.setError("Erro de negócio");
         err.setMessage(e.getMessage());
         err.setPath(request.getRequestURI());
         return ResponseEntity.status(status).body(err);
