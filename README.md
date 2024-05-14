@@ -6,9 +6,9 @@ Sistema para a empresa Emiteaí que gerencia o cadastro de pessoas físicas.
 
 ## Instruções para gerar o relatório
 - Cadastrar uma ou mais pessoas com CPF distintos
-- Envia uma requisição no endpoint status relatório. Ex: {host}/v1/pessoas/relatorio/status
 - Envia uma requisição no endpoint Solicitar relatório. Ex: {host}/v1/pessoas/relatorio/solicitar
-- Aguarda o endpoint pessoas/relatorio/status retorna a resposta "CONCLUIDO"
+- Envia uma requisição no endpoint Acompanhar status. Ex: {host}/v1/pessoas/relatorio/status
+- Quando o endpoint pessoas/relatorio/status retorna a resposta "CONCLUIDO"
 - Envia uma requisição no endpoint Buscar Relatório. Ex: {host}/v1/pessoas/relatorio
 
 ### Lista de CPFs válidos para cadastro de pessoas
