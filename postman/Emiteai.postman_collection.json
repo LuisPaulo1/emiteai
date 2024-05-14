@@ -48,7 +48,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/v1/pessoas/6",
+							"raw": "http://localhost:8080/v1/pessoas/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -57,7 +57,7 @@
 							"path": [
 								"v1",
 								"pessoas",
-								"6"
+								"1"
 							]
 						}
 					},
@@ -107,7 +107,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/v1/pessoas/5",
+							"raw": "http://localhost:8080/v1/pessoas/2",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -116,7 +116,7 @@
 							"path": [
 								"v1",
 								"pessoas",
-								"5"
+								"2"
 							]
 						}
 					},
@@ -149,28 +149,6 @@
 			"name": "Relatório",
 			"item": [
 				{
-					"name": "Status do relatório",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/v1/pessoas/relatorio/status",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"v1",
-								"pessoas",
-								"relatorio",
-								"status"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Solicitar relatório",
 					"request": {
 						"method": "GET",
@@ -187,6 +165,28 @@
 								"pessoas",
 								"relatorio",
 								"solicitar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Acompanhar status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/v1/pessoas/relatorio/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"pessoas",
+								"relatorio",
+								"status"
 							]
 						}
 					},
