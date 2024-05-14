@@ -15,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Log4j2
 @Controller
@@ -36,6 +35,19 @@ public class PessoaController {
         return ResponseEntity.ok(pessoas);
     }
 
+    @GetMapping(path = "/relatorio/solicitar")
+    public ResponseEntity<Void> solicitarEmissaoRelatorio() {
+        log.info("Recebendo requisição para solicitar a emissão do relatório.");
+        pessoaService.solicitarRelatorio();
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(path = "/relatorio/status")
+    public ResponseEntity<String> getRelatorioStatus() {
+        log.info("Recebendo requisição para acompanhar o status do relatório.");
+        return ResponseEntity.ok(pessoaService.getStatus());
+    }
+
     @GetMapping(path = "/relatorio", produces = "text/csv")
     public ResponseEntity<String> getRelatorioCsv() {
         log.info("Recebendo requisição para emitir o relatório.");
@@ -44,21 +56,6 @@ public class PessoaController {
         headers.setContentType(MediaType.parseMediaType("text/csv"));
         headers.setContentDispositionFormData("attachment", "relatorio.csv");
         return new ResponseEntity<>(csvData, headers, HttpStatus.OK);
-    }
-
-    @GetMapping(path = "/relatorio/solicitar")
-    public ResponseEntity<Void> solicitarEmissaoRelatorio() {
-        log.info("Recebendo requisição para solicitar a emissão do relatório.");
-        pessoaService.solicitarRelatorio();
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/relatorio/status")
-    public SseEmitter getRelatorioStatus() {
-        log.info("Recebendo requisição para acompanhar o status do relatório.");
-        SseEmitter emitter = new SseEmitter(30 * 1000L);
-        pessoaService.setSseEmitter(emitter);
-        return emitter;
     }
 
     @GetMapping(path = "/{id}")

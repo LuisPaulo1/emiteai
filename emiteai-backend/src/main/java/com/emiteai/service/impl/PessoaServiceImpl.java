@@ -20,9 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,12 +36,12 @@ public class PessoaServiceImpl implements PessoaService {
 
     private final EmiteaiPublisher emiteaiPublisher;
 
-    private SseEmitter sseEmitter;
-
     @Value("${app-properties.rabbitmq.relatorio.queue}")
     private String relatorio;
 
-    private boolean isEmitterComplete = false;
+    private boolean isEmissaoCompleta = false;
+
+    private String status = "AGUARDANDO SOLICITAÇÃO DE RELATÓRIO";
 
     private List<RelatorioPesssoaDto> relatorioPessoas = new ArrayList<>();
 
@@ -63,10 +61,22 @@ public class PessoaServiceImpl implements PessoaService {
 
     @Override
     public void solicitarRelatorio() {
-        if(this.sseEmitter != null && !this.isEmitterComplete) {
+        if(!this.isEmissaoCompleta) {
             log.info("Solicitação de emissão de relatório enviado para a fila: {}", relatorio);
             emiteaiPublisher.sendMessage(relatorio, "Gerar relatório de pessoas");
+            this.status = "EM PROCESSAMENTO";
+            this.isEmissaoCompleta = true;
         }
+    }
+
+    @Override
+    public String getStatus() {
+        return this.status;
+    }
+
+    @Override
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override
@@ -80,30 +90,19 @@ public class PessoaServiceImpl implements PessoaService {
     }
 
     @Override
-    public void setSseEmitter(SseEmitter sseEmitter) {
-        this.sseEmitter = sseEmitter;
-        this.isEmitterComplete = false;
-    }
-
-    @Override
     public void buscarRelatorio() {
         log.info("Buscando relatório.");
         List<Relatorio> relatorioPessoas = relatorioPessoaRepository.findAll();
         if (relatorioPessoas.isEmpty()) {
             log.info("Relatório não encontrado.");
+            this.isEmissaoCompleta = false;
             return;
         }
         this.relatorioPessoas = converterParaRelatorioPessoaDto(relatorioPessoas);
-        if (this.sseEmitter != null && !this.isEmitterComplete) {
-            try {
-                this.sseEmitter.send("CONCLUIDO");
-                this.sseEmitter.complete();
-                this.isEmitterComplete = true;
-                log.info("Relatório CONCLUÍDO.");
-            } catch (IOException e) {
-                this.sseEmitter.completeWithError(e);
-                this.isEmitterComplete = true;
-            }
+        if (this.isEmissaoCompleta) {
+            this.status = "CONCLUÍDO";
+            this.isEmissaoCompleta = false;
+            log.info("Relatório CONCLUÍDO.");
         }
     }
 

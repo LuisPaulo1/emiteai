@@ -1,5 +1,6 @@
 package com.emiteai.consumer;
 
+import com.emiteai.service.PessoaService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
@@ -14,6 +15,8 @@ import java.nio.charset.StandardCharsets;
 @Component
 public class EmiteaiDlqConsumer {
 
+    private PessoaService pessoaService;
+
     private final RabbitTemplate rabbitTemplate;
 
     @Value("${app-properties.rabbitmq.relatorio.queue}")
@@ -25,7 +28,8 @@ public class EmiteaiDlqConsumer {
     @Value("${app-properties.rabbitmq.queue.parking-lot}")
     private String queueParkingLot;
 
-    public EmiteaiDlqConsumer(RabbitTemplate rabbitTemplate) {
+    public EmiteaiDlqConsumer(PessoaService pessoaService, RabbitTemplate rabbitTemplate) {
+        this.pessoaService = pessoaService;
         this.rabbitTemplate = rabbitTemplate;
     }
 
@@ -53,6 +57,7 @@ public class EmiteaiDlqConsumer {
         } else {
             log.error("Mensagem não processada após {} tentativas, enviando para fila {}.", --retriesHeader, queueParkingLot);
             this.rabbitTemplate.convertAndSend(queueParkingLot, message);
+            this.pessoaService.setStatus("ERRO NA EMISSÃO DO RELATÓRIO");
         }
     }
 }
