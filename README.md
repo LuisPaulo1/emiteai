@@ -26,6 +26,7 @@ Sistema para a empresa Emiteaí que gerencia o cadastro de pessoas físicas.
 - Validação de duplicidade no campo CPF
 - Geração de relatório em csv executada de forma assíncrona pelo RabbitMQ
 - Implementação de Filter para interceptar as requisição que chegam na API
+- Integração com Grafana e Prometheus para exibição de métricas
 
 ## Tecnologias utilizadas
 - Java 17
