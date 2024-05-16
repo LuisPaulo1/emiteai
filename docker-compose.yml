@@ -1,5 +1,13 @@
 version: "3.9"
 
+volumes:
+  prometheus_data:
+  grafana_data:
+  
+networks:
+  emiteai-network:
+    driver: bridge
+
 services:
   emiteai-backend:
     image: csluispaulo/emiteai-backend
@@ -87,7 +95,24 @@ services:
       - "5672:5672"
     networks:
       - emiteai-network
-      
-networks:
-  emiteai-network:
-    driver: bridge
+
+  prometheus:
+    image: prom/prometheus:v2.22.0
+    container_name: prometheus
+    restart: always
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - emiteai-network
+  
+  grafana:
+    image: grafana/grafana:7.3.6
+    container_name: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - emiteai-network

@@ -1,0 +1,11 @@
+<configuration>
+    <appender name="PROMETHEUS" class="io.prometheus.client.logback.InstrumentedAppender">
+        <appender-ref ref="CONSOLE"/>
+    </appender>
+    <root level="info">
+        <appender-ref ref="PROMETHEUS" />
+    </root>
+    <root level="error">
+        <appender-ref ref="PROMETHEUS" />
+    </root>
+</configuration>
