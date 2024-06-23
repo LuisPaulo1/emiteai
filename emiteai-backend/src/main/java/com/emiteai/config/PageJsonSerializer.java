@@ -16,10 +16,11 @@ public class PageJsonSerializer extends JsonSerializer<Page<?>> {
 			SerializerProvider serializers) throws IOException {
 		gen.writeStartObject();
 		gen.writeObjectField("content", page.getContent());
-		gen.writeNumberField("totalElements", page.getTotalElements());
 		gen.writeNumberField("totalPages", page.getTotalPages());
+		gen.writeNumberField("totalElements", page.getTotalElements());
 		gen.writeNumberField("size", page.getSize());
 		gen.writeNumberField("number", page.getNumber());
+		gen.writeBooleanField("last", page.isLast());
 		gen.writeEndObject();
 	}
 
